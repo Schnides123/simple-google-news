@@ -45,12 +45,12 @@ Google News would ignore the query.
 Here are the acceptable topic values:
 
 * b (for business)
-*t (for technology)
-*e (for entertainment)
-*s (for sports)
-*snc (for science)
-*m (for health)
-*ir (for spotlight)
+* t (for technology)
+* e (for entertainment)
+* s (for sports)
+* snc (for science)
+* m (for health)
+* ir (for spotlight)
 
 == Installation ==
 
