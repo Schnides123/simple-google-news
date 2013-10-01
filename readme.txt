@@ -18,7 +18,7 @@ The 'Simple Google News' WordPress plugin makes it easy to display Google News r
 
 [google_news]
 
-==Available Parameters==
+= Available Parameters =
 
 There are a handful of optional parameters that you can use to customize the output to your liking. 
 
