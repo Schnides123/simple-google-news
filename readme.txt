@@ -22,7 +22,7 @@ The 'Simple Google News' WordPress plugin makes it easy to display Google News r
 
 There are a handful of optional parameters that you can use to customize the output to your liking. 
 
-**query** – *Default: none*. Use this you want to search Google News for a particular word or phrase.
+**query** – *Default: none*. Use this if you want to search Google News for a particular word or phrase.
 
 **limit** – *Default: 5, Max: 10*. Using the ‘limit’ parameter, you can set the maximum number of results that you would like to display on your post or page.
 
