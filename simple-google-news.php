@@ -80,6 +80,35 @@ function build_feed_url($atts) {
 	return $url;
 }
 
+//this function calculates relative time
+function time_ago($timestamp)    {
+        if( !is_numeric( $timestamp ) ){
+        $timestamp = strtotime( $timestamp );
+        if( !is_numeric( $timestamp ) ){
+            return "";
+        }
+    }
+
+    $difference = time() - $timestamp;
+    $periods = array( "second", "minute", "hour", "day", "week", "month", "years", "decade" );
+    $lengths = array( "60","60","24","7","4.35","12","10");
+
+    if ($difference > 0) { // this was in the past
+        $ending = "ago";
+    }else { // this was in the future
+        $difference = -$difference;
+        $ending = "to go";
+    }
+    for( $j=0; $difference>=$lengths[$j] and $j < 7; $j++ )
+        $difference /= $lengths[$j];
+    $difference = round($difference);
+    if( $difference != 1 ){
+        $periods[$j].= "s";
+    }
+    $text = "$difference $periods[$j] $ending";
+    return $text;
+    }
+
 //this function handles all the real work
 function get_news($atts) {
 	//if there are single quotes in the query, let's remove them. They'll break things, and they aren't necessary for performing a search
@@ -116,12 +145,17 @@ function build_feed($atts, $newsUrl) {
 		
 		foreach ($items as $item) {
 			//Google News adds the source to the title. I don't like the way that looks, so I'm getting rid of it. We'll add the source ourselves later on
-			$title = explode(' - ', $item['title']);	
+			$title = explode(' - ', $item['title']);
+			
+			//calculate the relative time
+			$relDate = time_ago($item['pubdate']);
 			
 			//by default, Google lumps in the image with the description. We're pull the image out.
 			preg_match('~<img[^>]*src\s?=\s?[\'"]([^\'"]*)~i',$item['description'], $imageurl);
 	
 			$output .= '<div class="newsresult">';
+			
+			//$output .= $pubDate;
 	
 			//by default, the news descriptions are full of ugly markup including tables, font definitions, line breaks, and other things.
 			//to make it look nice on any site, we're going to strip all the formatting from the news descriptions
@@ -140,7 +174,7 @@ function build_feed($atts, $newsUrl) {
 			}
 			
 			$output .= '<a href="' . $item['link'] . '" class="google_news_title" rel="nofollow" target="_blank">' . $title[0] . '</a>';
-			$output .= '<p><span class="smallattribution">' . $title[1] .'</span> - ' . $description . '...</p>';
+			$output .= '<p><span class="smallattribution">' . $title[1] .' - ' . $relDate . '</span><br />' . $description . '...</p>';
 			//this attribution is required by the Google News terms of use
 			$output .= '</div>';
 			

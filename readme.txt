@@ -6,7 +6,7 @@ Plugin URI: http://kidvolt.com/simple-google-news
 Tags: google, google news, rss, feed, news
 Requires at least: 2.5
 Tested up to: 3.6.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,8 +74,8 @@ No. But if there is enough interest, I will consider working on a widgetized ver
 
 == Changelog ==
 
-This is the first release. Nothing to report.
+1.1.0 - Added relative time to each result so you can see how new each article is.
 
 == Upgrade Notice ==
 
-No reason to update yet, as this is the first release.
+If you update now, you will see the relative time of each post in the feed.
