@@ -4,7 +4,7 @@
  * Plugin Name: Simple Google News
  * Plugin URI: http://kidvolt.com/simple-google-news
  * Description: This plugin makes it easy to add Google News results to your posts, pages, or sidebars
- * Version: 1.0
+ * Version: 1.1
  * Author: Kevin Spence
  * Author URI: http://kidvolt.com
  * License: GPL2
