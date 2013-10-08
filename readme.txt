@@ -32,7 +32,7 @@ There are a handful of optional parameters that you can use to customize the out
 
 **region** – *Default: us*. With the ‘region’ parameter, you can choose to show news from a particular part of the world. To see the list of currently supported regions, visit [link](https://support.google.com/news/answer/40237?hl=en "this page"). Note the ‘ned’ parameter that's present in each region link. For example, India’s ned parameter is set to ‘in’. That is the value you would use to display news from that particular region.
 
-**sort** - *Default: relevancy. This parameter gives you additional control over the results that are returned. The acceptable values are:
+**sort** - *Default: relevancy*. This parameter gives you additional control over the results that are returned. The acceptable values are:
 
 * r (for relevance)
 * n by date(newest first)
@@ -82,6 +82,7 @@ No. But if there is enough interest, I will consider working on a widgetized ver
 == Changelog ==
 
 1.2.0 - Added the ability to sort results by date
+
 1.1.0 - Added relative time to each result so you can see how new each article is.
 
 == Upgrade Notice ==
