@@ -6,7 +6,7 @@ Plugin URI: http://kidvolt.com/simple-google-news
 Tags: google, google news, rss, feed, news
 Requires at least: 2.5
 Tested up to: 3.6.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,13 @@ There are a handful of optional parameters that you can use to customize the out
 **length** – *Default: 200*. The length parameter lets you control how many characters of the description (rounded to the nearest complete word) should be shown.
 
 **region** – *Default: us*. With the ‘region’ parameter, you can choose to show news from a particular part of the world. To see the list of currently supported regions, visit [link](https://support.google.com/news/answer/40237?hl=en "this page"). Note the ‘ned’ parameter that's present in each region link. For example, India’s ned parameter is set to ‘in’. That is the value you would use to display news from that particular region.
+
+**sort** - *Default: relevancy. This parameter gives you additional control over the results that are returned. The acceptable values are:
+
+* r (for relevance)
+* n by date(newest first)
+* d by date(newest first with duplicates)
+* o by date (oldest first)
 
 **topic** – *Default: none*. If you want to display news by topic (ie: technology, entertainment, etc), you can do so with this parameter. For example, if you wanted to show technology results, you would set your shortcode to something like this:
 
@@ -74,8 +81,9 @@ No. But if there is enough interest, I will consider working on a widgetized ver
 
 == Changelog ==
 
+1.2.0 - Added the ability to sort results by date
 1.1.0 - Added relative time to each result so you can see how new each article is.
 
 == Upgrade Notice ==
 
-If you update now, you will see the relative time of each post in the feed.
+If you update now, you will be able to sort results by date. You will also be able to see when each post was published in the feed (ie: 5 minutes ago).

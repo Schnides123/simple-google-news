@@ -4,7 +4,7 @@
  * Plugin Name: Simple Google News
  * Plugin URI: http://kidvolt.com/simple-google-news
  * Description: This plugin makes it easy to add Google News results to your posts, pages, or sidebars
- * Version: 1.1
+ * Version: 1.2
  * Author: Kevin Spence
  * Author URI: http://kidvolt.com
  * License: GPL2
@@ -36,6 +36,7 @@ DEFINE("default_query", "");
 DEFINE("default_topic", "");
 DEFINE("default_images", "on");
 DEFINE("default_length", "200");
+DEFINE("default_sort", "r");
 
 //register and enqueue our (very small) style sheet
 function register_google_news_styles() {
@@ -57,7 +58,9 @@ function init_google_news($atts) {
 		"query" => default_query,
 		"topic" => default_topic,
 		"images" => default_images,
-		"length" => default_length
+		"length" => default_length,
+		"sort" => default_sort
+		
 	), $atts);
 	
 	//now, let's run the function that does the meat of the work
@@ -76,15 +79,15 @@ function shortdesc($desc, $length){
 
 //this function builds and returns the feed URL
 function build_feed_url($atts) {
-	$url = 'http://news.google.com/news?q=' . $atts['query'] . '&topic=' . $atts['topic'] . '&ned=' . $atts['region'];
+	$url = 'http://news.google.com/news?q=' . $atts['query'] . '&topic=' . $atts['topic'] . '&ned=' . $atts['region'] . '&scoring=' . $atts['sort'];
 	return $url;
 }
 
 //this function calculates relative time
 function time_ago($timestamp)    {
-        if( !is_numeric( $timestamp ) ){
+        if(!is_numeric($timestamp)){
         $timestamp = strtotime( $timestamp );
-        if( !is_numeric( $timestamp ) ){
+        if(!is_numeric($timestamp)){
             return "";
         }
     }
@@ -107,7 +110,7 @@ function time_ago($timestamp)    {
     }
     $text = "$difference $periods[$j] $ending";
     return $text;
-    }
+}
 
 //this function handles all the real work
 function get_news($atts) {
