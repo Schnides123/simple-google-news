@@ -6,13 +6,15 @@ Plugin URI: http://kidvolt.com/simple-google-news
 Tags: google, google news, rss, feed, news
 Requires at least: 2.5
 Tested up to: 3.6.1
-Stable tag: 1.2.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easily add Google News search results to posts or pages on your WordPress site.
+Easily add Google News search results to posts, pages, or sidebars on your WordPress site.
 
 == Description ==
+
+This plugin can be used in two ways: through a widget, or with shortcodes.
 
 The 'Simple Google News' WordPress plugin makes it easy to display Google News results on your WordPress site’s posts or pages by using the following shortcode:
 
@@ -79,7 +81,11 @@ No. But if there is enough interest, I will consider working on a widgetized ver
 
 1. This is a screenshot from my site, where I've used the shortcode to display news about Google.
 
+2. This is a screenshot from my site, where I've used the widget to display news about Google in my sidebar.
+
 == Changelog ==
+
+2.0.0 - Added widget functionality. You can now display Google News results in your sidebars.
 
 1.2.0 - Added the ability to sort results by date
 

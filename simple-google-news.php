@@ -4,7 +4,7 @@
  * Plugin Name: Simple Google News
  * Plugin URI: http://kidvolt.com/simple-google-news
  * Description: This plugin makes it easy to add Google News results to your posts, pages, or sidebars
- * Version: 1.2
+ * Version: 2.0
  * Author: Kevin Spence
  * Author URI: http://kidvolt.com
  * License: GPL2
@@ -72,6 +72,9 @@ function init_google_news($atts) {
 
 //by default, the news descriptions are very long. This function will help us shorten them
 function shortdesc($desc, $length){
+	if($length == '') {
+		$length = '50';
+	}
      $desc = substr($desc,0,$length);
      $desc = substr($desc,0,strrpos($desc," "));
      return $desc;
@@ -123,13 +126,13 @@ function get_news($atts) {
 	$newsUrl = build_feed_url($atts);
 	
 	//call the build_feed function to parse the feed and return the results to us
-	$output = build_feed($atts, $newsUrl);
+	$output = build_feed($atts, $newsUrl, $iswidget);
 	
 	return $output;
 }
 
 //this is the function that actually builds the output
-function build_feed($atts, $newsUrl) {
+function build_feed($atts, $newsUrl, $iswidget) {
 	//we're using WordPress' built in MagPie support for parsing the Google News feed
 	$feed = fetch_rss($newsUrl . '&output=rss');
 	$items = array_slice($feed->items, 0, $atts['limit']);
@@ -139,7 +142,10 @@ function build_feed($atts, $newsUrl) {
 		
 		$output .= '<div id="googlenewscontainer">';
 		
-		if($atts['query']!='') {
+		if($iswidget!='') {
+			echo '<h4 class="widget-title widgettitle">' . $atts['title'] . '</h4>';
+		}
+		elseif($atts['query']!='') {
 			$output .= '<h3 class="newsheader">' . str_replace("+", " ", $atts['query']) . ' in the news</h3>';
 		}
 		else {
@@ -197,5 +203,116 @@ function build_feed($atts, $newsUrl) {
 	return $output;
 	}
 }
+
+//The widget code starts here
+
+class google_news_widget extends WP_Widget {
+
+	// constructor
+	function google_news_widget() {
+		parent::WP_Widget(false, $name = __('Google News Widget', 'wp_widget_plugin') );
+	}
+
+	// widget form creation
+	function form($instance) {	
+	// Check values
+	
+		$defaults = array('query' => '', 'limit' => '5', 'images' => 'On', 'sort' => 'Relevance', 'length' => '50', 'title' => '');
+		$instance = wp_parse_args((array) $instance, $defaults);
+?>
+		<!-- Start widget title -->
+		<p>
+		<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title', 'wp_widget_plugin'); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $instance['title']; ?>" />
+		</p>
+		
+
+		<!-- Start query options -->
+		<p>
+		<label for="<?php echo $this->get_field_id('query'); ?>"><?php _e('Query (optional)', 'wp_widget_plugin'); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id('query'); ?>" name="<?php echo $this->get_field_name('query'); ?>" type="text" value="<?php echo $instance['query']; ?>" />
+		</p>
+
+		<!-- Start result limit -->
+		<p>
+		<label for="<?php echo $this->get_field_id('limit'); ?>"><?php _e('Result Limit', 'wp_widget_plugin'); ?></label>
+		<select name="<?php echo $this->get_field_name('limit'); ?>" id="<?php echo $this->get_field_id('limit'); ?>" class="widefat">
+
+		<?php
+		$options = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10');
+		foreach ($options as $option) { ?>
+			<option <?php selected( $instance['limit'], $option ); ?> value="<?php echo $option; ?>"><?php echo $option; ?></option>
+		<?php
+		}
+		?>
+		</select>
+		</p>
+
+		<!-- Start length options -->
+		<p>
+		<label for="<?php echo $this->get_field_id('length'); ?>"><?php _e('Length', 'wp_widget_plugin'); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id('length'); ?>" name="<?php echo $this->get_field_name('length'); ?>" type="text" value="<?php echo $instance['length']; ?>" />
+		</p>
+
+		<!-- Start image options -->
+		<p>
+		<label for="<?php echo $this->get_field_id('images'); ?>"><?php _e('Images', 'wp_widget_plugin'); ?></label>
+		<select name="<?php echo $this->get_field_name('images'); ?>" id="<?php echo $this->get_field_id('images'); ?>" class="widefat">
+
+		<?php
+		$options = array('On', 'Off');
+		foreach ($options as $option) { ?>
+			<option <?php selected( $instance['images'], $option ); ?> value="<?php echo $option; ?>"><?php echo $option; ?></option>
+		<?php
+		}
+		?>
+		</select>
+		</p>
+
+		<!-- Start Sort Options -->
+		
+		<p>
+		<label for="<?php echo $this->get_field_id( 'sort' ); ?>"><?php _e( 'Sort Results By', 'wp_widget_plugin' ); ?>:</label>
+					<select id="<?php echo $this->get_field_id( 'sort' ); ?>" name="<?php echo $this->get_field_name( 'sort' ); ?>">
+						<option value="r" <?php selected( r, $instance['sort'] ); ?>><?php _e( 'Relevancy' ); ?></option>
+						<option value="n" <?php selected( n, $instance['sort'] ); ?>><?php _e( 'Date' ); ?></option>
+					</select>
+		</p>
+
+<?php
+	}
+
+	// widget update
+	function update($new_instance, $old_instance) {
+		$instance = $old_instance;
+		$instance['query'] = strip_tags($new_instance['query']);
+		$instance['limit'] = strip_tags($new_instance['limit']);
+		$instance['images'] = strip_tags($new_instance['images']);
+		$instance['sort'] = strip_tags($new_instance['sort']);
+		$instance['length'] = strip_tags($new_instance['length']);
+		$instance['title'] = strip_tags($new_instance['title']);
+		return $instance;
+	}
+
+	// widget display
+	function widget($args, $instance) {
+		extract( $args );
+		// these are the widget options
+		
+		register_google_news_styles();
+		
+		$newsUrl = build_feed_url($instance);
+		
+		$iswidget = 'yes';
+		$myfeed = build_feed($instance, $newsUrl, $iswidget);
+		
+		echo $myfeed;
+		
+   //echo $after_widget;
+	}
+}
+
+// register widget
+add_action('widgets_init', create_function('', 'return register_widget("google_news_widget");'))
 
 ?>

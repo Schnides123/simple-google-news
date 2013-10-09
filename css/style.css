@@ -29,3 +29,20 @@
 .clear {
 	clear:both;
 }	
+
+.sidebar .newsresult {
+	border-bottom: 1px solid #ccc;
+	padding: 10px 0;
+}
+
+.sidebar .newsresult img {
+	width: 45px;
+}
+
+.sidebar .smallattribution {
+	font-size: 75%;
+}
+
+.sidebar p.googleattribution {
+	margin-top:15px;
+}
