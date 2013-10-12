@@ -6,7 +6,7 @@ Plugin URI: http://kidvolt.com/simple-google-news
 Tags: google, google news, rss, feed, news
 Requires at least: 2.5
 Tested up to: 3.6.1
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,9 +73,9 @@ Here are the acceptable topic values:
 
 A couple things could be going on. First, your search may not be returning any results. Verify that the search is good by visiting news.google.com and trying your search there. Second, you may have provided some invalid values for the shortcode parameters. Doublecheck them.
 
-= Can I use a shortcode in a widget? =
+= Can I search for an exact string using quotes? =
 
-No. But if there is enough interest, I will consider working on a widgetized version of this plugin.
+Yes! You just need to make sure that you're wrapping the double quotes in single quotes, like so: [google_news query='"Android Sales"']
 
 == Screenshots ==
 

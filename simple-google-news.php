@@ -4,7 +4,7 @@
  * Plugin Name: Simple Google News
  * Plugin URI: http://kidvolt.com/simple-google-news
  * Description: This plugin makes it easy to add Google News results to your posts, pages, or sidebars
- * Version: 2.0
+ * Version: 2.1
  * Author: Kevin Spence
  * Author URI: http://kidvolt.com
  * License: GPL2
@@ -119,6 +119,7 @@ function time_ago($timestamp)    {
 function get_news($atts) {
 	//if there are single quotes in the query, let's remove them. They'll break things, and they aren't necessary for performing a search
 	$atts['query'] = str_replace("'", "", $atts['query']);
+
 	//we also need to replace any spaces with proper word separators
 	$atts['query'] = str_replace(" ", "+", $atts['query']);
 
@@ -134,23 +135,14 @@ function get_news($atts) {
 //this is the function that actually builds the output
 function build_feed($atts, $newsUrl, $iswidget) {
 	//we're using WordPress' built in MagPie support for parsing the Google News feed
+
 	$feed = fetch_rss($newsUrl . '&output=rss');
 	$items = array_slice($feed->items, 0, $atts['limit']);
 	
 	//if there are results, loop through them
 	if(!empty($items)) {
 		
-		$output .= '<div id="googlenewscontainer">';
-		
-		if($iswidget!='') {
-			echo '<h4 class="widget-title widgettitle">' . $atts['title'] . '</h4>';
-		}
-		elseif($atts['query']!='') {
-			$output .= '<h3 class="newsheader">' . str_replace("+", " ", $atts['query']) . ' in the news</h3>';
-		}
-		else {
-			$output .= '<h3 class="newsheader">Related news</h3>';
-		}
+		$output .= '<div id="googlenewscontainer">';		
 		
 		foreach ($items as $item) {
 			//Google News adds the source to the title. I don't like the way that looks, so I'm getting rid of it. We'll add the source ourselves later on
