@@ -1,16 +1,13 @@
 ﻿=== Simple Google News ===
-Contributors: (KevinSpence)
+
 Donate link: http://kidvolt.com/
 Author URI: http://kidvolt.com/
 Plugin URI: http://kidvolt.com/simple-google-news
-Tags: google, google news, rss, feed, news
-Requires at least: 2.5
-Tested up to: 3.6.1
-Stable tag: 2.1.0
+
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easily add Google News search results to posts, pages, or sidebars on your WordPress site.
+This is a fork of Kevin Spence's Simple Google News plugin for Wordpress, updated to comply with Google News' current request format. Some depricated features such as combining different request types have been removed to avoid errors. 
 
 == Description ==
 
