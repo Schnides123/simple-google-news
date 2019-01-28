@@ -9,11 +9,11 @@
  * Author URI: http://kidvolt.com
  * License: GPL2
  */
- 
+
  /*  Copyright 2013  Kevin Spence  (email : kevin@kidvolt.com)
 
     This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
+    it under the terms of the GNU General Public License, version 2, as
     published by the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
@@ -40,17 +40,17 @@ DEFINE("default_sort", "r");
 
 //register and enqueue our (very small) style sheet
 function register_google_news_styles() {
-	wp_register_style( 'google-news-style', plugins_url( '/css/style.css', __FILE__ ), array(), '20120208', 'all' ); 
+	wp_register_style( 'google-news-style', plugins_url( '/css/style.css', __FILE__ ), array(), '20120208', 'all' );
 	wp_enqueue_style( 'google-news-style' );
 }
-	
+
 //register the shortcode
 add_shortcode( 'google_news', 'init_google_news' );
 
 function init_google_news($atts) {
 
 	register_google_news_styles();
-	
+
 	//process the incoming values and assign defaults if they are undefined
 	$atts=shortcode_atts(array(
 		"limit" => default_limit,
@@ -60,12 +60,12 @@ function init_google_news($atts) {
 		"images" => default_images,
 		"length" => default_length,
 		"sort" => default_sort
-		
+
 	), $atts);
-	
+
 	//now, let's run the function that does the meat of the work
 	$output = get_news($atts);
-	
+
 	//send the output back to the post
 	return $output;
 }
@@ -82,7 +82,10 @@ function shortdesc($desc, $length){
 
 //this function builds and returns the feed URL
 function build_feed_url($atts) {
-	$url = 'http://news.google.com/news?q=' . $atts['query'] . '&topic=' . $atts['topic'] . '&ned=' . $atts['region'] . '&scoring=' . $atts['sort'];
+  if (isset($atts['query'])) $url = 'https://news.google.com/news/rss/search/section/q/' . $atts['query'];
+  else if (isset($atts['topic'])) $url = 'https://news.google.com/news/rss/headlines/section/topic/' . $atts['topic'];
+  else if (isset($atts['region'])) $url = 'https://news.google.com/news/rss/headlines/section/geo/' . $atts['region'];
+  else $url = 'https://news.google.com/news/rss';
 	return $url;
 }
 
@@ -125,10 +128,10 @@ function get_news($atts) {
 
 	//call the build_feed_url function to construct the feed URL for us
 	$newsUrl = build_feed_url($atts);
-	
+
 	//call the build_feed function to parse the feed and return the results to us
 	$output = build_feed($atts, $newsUrl, $iswidget);
-	
+
 	return $output;
 }
 
@@ -136,36 +139,36 @@ function get_news($atts) {
 function build_feed($atts, $newsUrl, $iswidget) {
 	//we're using WordPress' built in MagPie support for parsing the Google News feed
 
-	$feed = fetch_rss($newsUrl . '&output=rss');
+	$feed = fetch_rss($newsUrl);
 	$items = array_slice($feed->items, 0, $atts['limit']);
-	
+
 	//if there are results, loop through them
 	if(!empty($items)) {
-		
-		$output .= '<div id="googlenewscontainer">';		
-		
+
+		$output .= '<div id="googlenewscontainer">';
+
 		foreach ($items as $item) {
 			//Google News adds the source to the title. I don't like the way that looks, so I'm getting rid of it. We'll add the source ourselves later on
 			$title = explode(' - ', $item['title']);
-			
+
 			//calculate the relative time
 			$relDate = time_ago($item['pubdate']);
-			
+
 			//by default, Google lumps in the image with the description. We're pull the image out.
 			preg_match('~<img[^>]*src\s?=\s?[\'"]([^\'"]*)~i',$item['description'], $imageurl);
-	
+
 			$output .= '<div class="newsresult">';
-			
+
 			//$output .= $pubDate;
-	
+
 			//by default, the news descriptions are full of ugly markup including tables, font definitions, line breaks, and other things.
 			//to make it look nice on any site, we're going to strip all the formatting from the news descriptions
 			preg_match('@src="([^"]+)"@', $item['description'], $match);
-	
-			$description = explode('<font size="-1">', $item['description']);	
+
+			$description = explode('<font size="-1">', $item['description']);
 			$description = strip_tags($description[2]);
 			$description = shortdesc($description, $atts['length']);
-	
+
 			//if there is a news image, let's show it. If there isn't one, we'll show a blank space there instead
 			//this is done for consistent formatting
 			if(strtolower($atts['images']) == 'on') {
@@ -173,14 +176,14 @@ function build_feed($atts, $newsUrl, $iswidget) {
 					$output .= '<a href="' . $item['link'] . '" class="google_news_title" rel="nofollow" target="_blank"><div class="newsimage"><img src="' . $imageurl[1] . '" /></a></div>';
 				}
 			}
-			
+
 			$output .= '<a href="' . $item['link'] . '" class="google_news_title" rel="nofollow" target="_blank">' . $title[0] . '</a>';
 			$output .= '<p><span class="smallattribution">' . $title[1] .' - ' . $relDate . '</span><br />' . $description . '...</p>';
 			//this attribution is required by the Google News terms of use
 			$output .= '</div>';
-			
+
 		}
-	
+
 	//we need to add a link to Google's search results to comply with their terms of use
 	if($atts['query'] != '') {
 		$output .= '<p class="googleattribution">News via Google. <a href="' . $newsUrl . '">See more news matching \'' . str_replace("+", " ", $atts['query']) . '\'</a></p>';
@@ -188,10 +191,10 @@ function build_feed($atts, $newsUrl, $iswidget) {
 	else {
 		$output .= '<p class="googleattribution">News via Google. <a href="' . $newsUrl . '">See more news like this</a></p>';
 	}
-	
+
 	$output .= '<div class="clear"></div>';
 	$output .= '</div>';
-	
+
 	return $output;
 	}
 }
@@ -206,9 +209,9 @@ class google_news_widget extends WP_Widget {
 	}
 
 	// widget form creation
-	function form($instance) {	
+	function form($instance) {
 	// Check values
-	
+
 		$defaults = array('query' => '', 'limit' => '5', 'images' => 'On', 'sort' => 'Relevance', 'length' => '50', 'title' => '');
 		$instance = wp_parse_args((array) $instance, $defaults);
 ?>
@@ -217,7 +220,7 @@ class google_news_widget extends WP_Widget {
 		<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title', 'wp_widget_plugin'); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $instance['title']; ?>" />
 		</p>
-		
+
 
 		<!-- Start query options -->
 		<p>
@@ -262,7 +265,7 @@ class google_news_widget extends WP_Widget {
 		</p>
 
 		<!-- Start Sort Options -->
-		
+
 		<p>
 		<label for="<?php echo $this->get_field_id( 'sort' ); ?>"><?php _e( 'Sort Results By', 'wp_widget_plugin' ); ?>:</label>
 					<select id="<?php echo $this->get_field_id( 'sort' ); ?>" name="<?php echo $this->get_field_name( 'sort' ); ?>">
@@ -290,16 +293,16 @@ class google_news_widget extends WP_Widget {
 	function widget($args, $instance) {
 		extract( $args );
 		// these are the widget options
-		
+
 		register_google_news_styles();
-		
+
 		$newsUrl = build_feed_url($instance);
-		
+
 		$iswidget = 'yes';
 		$myfeed = build_feed($instance, $newsUrl, $iswidget);
-		
+
 		echo $myfeed;
-		
+
    //echo $after_widget;
 	}
 }
